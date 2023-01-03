@@ -1,11 +1,11 @@
 let typeGame = +window.prompt("If you want to play a one-player game, press 1. If you want to play a two player game, press 2.")
 let colors = ["green", "blue"]
 let fruit = []
-let chosenFruit; 
 let antennaOrient = []
 let smileyOrient = [];
 let soundOver;
 let soundEat;
+let chosenFruit;
 
 
 function preload() {
@@ -13,12 +13,9 @@ soundOver = loadSound("images/kick.wav");
 soundEat = loadSound("images/biteApple.mp3")
 smileyOrient = [loadImage("images/smileyup.png"), loadImage("images/smileydown.png"), loadImage("images/smileyright.png"), loadImage("images/smileyleft.png")]
 antennaOrient = [loadImage("images/antennaUp.png"), loadImage("images/antennaDown.png"), loadImage("images/antennaRight.png"), loadImage("images/antennaLeft.png") ]
-  
 fruit = [loadImage("images/apple.png"), loadImage("images/orange.png"), loadImage("images/leaf.png")]
-
-  
-chosenFruit = fruit[0]
 }
+
 
 
 class Tail {
@@ -44,12 +41,11 @@ let grid = 25;
 let fruitX = 7
 let fruitY = 7
 let snakes = [];
-
 let antenna = [];
-
 let img;
-
 let score = 0;
+// chosenFruit = fruit[0];
+// console.log(fruit[0]);
 
 
 
@@ -73,6 +69,8 @@ function setup() {
 
   snakes[i].tail.push(new Tail((i*2)* grid, (i*3) * grid, colors[i]))
   }
+
+  chosenFruit = fruit[0];
   
   frameRate(8);
 }//end setup
@@ -91,6 +89,8 @@ function draw() {
   if (snakes.length> 1) {
     twoSnakeCollison();
   }
+
+
   drawFruit(numSnakes);
   fill("white")
   textSize(16)
@@ -140,10 +140,11 @@ function draw() {
 
 function checkFruitCollision(n) {
     if (fruitX*grid === antenna[n].x && fruitY*grid === antenna[n].y) {
+      let col = "red";
       soundEat.play();
           if (chosenFruit === fruit[0]) {col = "red"}
-          if (chosenFruit === fruit[1]) {col = "orange"}
-          if (chosenFruit === fruit[2]) {col = color(105, 232, 86)}
+          if (chosenFruit === fruit[1]) {col= "orange"}
+          if (chosenFruit === fruit[2]) {col= color(105, 232, 86)}
       fruitX = floor(random(0, grid))
       fruitY = floor(random(0, grid))
       chosenFruit = random(fruit)
@@ -256,6 +257,7 @@ if (key==="d") {
 function checkSnakeCollision(n) {
   for (let i = 1; i < snakes[n].tail.length; i++) {
       if (snakes[n].tail.length > 2 && antenna[n].x === snakes[n].tail[i].x && antenna[n].y === snakes[n].tail[i].y) {
+        noLoop();
         winDepends(n);
       }
     }
@@ -265,6 +267,7 @@ function checkSnakeCollision(n) {
 
 function checkWallCollision(n) {
   if (antenna[n].x === 625 || antenna[n].x <-1|| antenna[n].y === 625 || antenna[n].y < -1) {
+    noLoop();
     winDepends(n);
     return;
   }
@@ -274,13 +277,16 @@ function twoSnakeCollison(n) {
   for (let i = 0; i < snakes[0].tail.length; i++) {
    for (let j = 0; j < snakes[1].tail.length; j++) {
       if(antenna[0].x === antenna[1].x && antenna[0].y === antenna[1].y) {
+        noLoop();
         gameOver("YOU BOTH LOSE")
         return;
       } else if (antenna[0].x === snakes[1].tail[j].x && antenna[0].y === snakes[1].tail[j].y) {
         gameOver("BLUE WINS");
+        noLoop();
         return;
         
       } else if (antenna[1].x === snakes[0].tail[i].x && antenna[1].y === snakes[0].tail[i].y) {
+        noLoop();
         gameOver("GREEN WINS")
         return;
       }
