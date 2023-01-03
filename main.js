@@ -296,6 +296,7 @@ function twoSnakeCollison(n) {
 
 function winDepends(numSnakes) {
    if (numSnakes === 0 && snakes.length === 1) {
+    noLoop();
           gameOver("YOU LOSE")
           return;
         } else if (numSnakes===0) {
