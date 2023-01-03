@@ -1,4 +1,4 @@
-let typeGame = +window.prompt("If you want to play a one-player game, press 1. If you want to play a two player game, press 2.")
+let typeGame = window.prompt("If you want to play a one-player game, press 1. If you want to play a two player game, press 2.")
 let colors = ["green", "blue"]
 let fruit = []
 let antennaOrient = []
@@ -6,6 +6,7 @@ let smileyOrient = [];
 let soundOver;
 let soundEat;
 let chosenFruit;
+let numPlayers = +typeGame;
 
 
 function preload() {
@@ -53,8 +54,14 @@ function setup() {
 	let sketch = createCanvas(625, 625);
     sketch.parent("mycanvas");
 
+    print(typeGame);
+
+    if (typeGame === "AI") {
+      numPlayers = 2;
+    }
+
   
-  for (let i = 0; i < typeGame; i++) {
+  for (let i = 0; i < numPlayers; i++) {
   snakes.push ({
       tail: [],
       newCol: false,
@@ -63,10 +70,8 @@ function setup() {
   }
 
 
-  for (let i = 0; i < typeGame; i++) {
+  for (let i = 0; i < numPlayers; i++) {
   antenna.push(new Antenna((i*3)* grid, (i*3) * grid, 0, 0, antennaOrient[0], smileyOrient[0]))
-  
-
   snakes[i].tail.push(new Tail((i*2)* grid, (i*3) * grid, colors[i]))
   }
 
@@ -88,6 +93,10 @@ function draw() {
     
   if (snakes.length> 1) {
     twoSnakeCollison();
+  }
+
+  if (typeGame === "AI") {
+    containAI();
   }
 
 
@@ -166,89 +175,82 @@ function checkFruitCollision(n) {
   }
 
 
-function keyPressed() {
-if (keyCode===UP_ARROW) {
-  if (antenna[0].yspeed === 1) {
+function moveUp(n) {
+  if (antenna[n].yspeed === 1) {
     return;
   }
-  antenna[0].yspeed = -1;
-  antenna[0].xspeed = 0;
-  antenna[0].orientation = antennaOrient[0];
-  antenna[0].smiley = smileyOrient[0];
+  antenna[n].yspeed = -1;
+  antenna[n].xspeed = 0;
+  antenna[n].orientation = antennaOrient[0];
+  antenna[n].smiley = smileyOrient[0];
+}
+
+function moveDown(n) {
+  if (antenna[n].yspeed === -1) {
+    return;
+  }
+  antenna[n].yspeed = 1;
+  antenna[n].xspeed = 0;
+  antenna[n].orientation = antennaOrient[1];
+  antenna[n].smiley = smileyOrient[1];
+}
+
+function moveRight(n) {
+  if (antenna[n].xspeed === -1) {
+    return;
+  }
+  antenna[n].yspeed = 0;
+  antenna[n].xspeed = 1;
+  antenna[n].orientation = antennaOrient[2];
+  antenna[n].smiley = smileyOrient[2];
+}
+
+function moveLeft(n) {
+  if (antenna[n].xspeed === 1) {
+    return;
+  }
+  antenna[n].yspeed = 0;
+  antenna[n].xspeed = -1;
+  antenna[n].orientation = antennaOrient[3];
+  antenna[n].smiley = smileyOrient[3];
+}
+
+function keyPressed() {
+if (keyCode===UP_ARROW) {
+  moveUp(0);
 } 
 
 if (keyCode===DOWN_ARROW) {
-  if (antenna[0].yspeed === -1) {
-    return;
-  }
-  antenna[0].yspeed = 1;
-  antenna[0].xspeed = 0;
-  antenna[0].orientation = antennaOrient[1];
-  antenna[0].smiley = smileyOrient[1];
+  moveDown(0);
 } 
 
 if (keyCode===LEFT_ARROW) {
-  if (antenna[0].xspeed === 1) {
-    return;
-  }
-  antenna[0].yspeed = 0;
-  antenna[0].xspeed = -1;
-  antenna[0].orientation = antennaOrient[3];
-  antenna[0].smiley = smileyOrient[3];
+  moveLeft(0);
 } 
 
 if (keyCode===RIGHT_ARROW) {
-  if (antenna[0].xspeed === -1) {
-    return;
-  }
-  antenna[0].yspeed = 0;
-  antenna[0].xspeed = 1;
-  antenna[0].orientation = antennaOrient[2];
-  antenna[0].smiley = smileyOrient[2];
+  moveRight(0);;
 }
 
 
-
-  //snake 2
-  if (key === "w") {
-  if (antenna[1].yspeed === 1) {
-    return;
+  if (typeGame === "2") {
+  //snake 2-not AI
+    if (key === "w") {
+      moveUp(1)
+    } 
+  
+    if (key==="s") {
+      moveDown(1);
+    } 
+  
+    if (key==="a") {
+      moveLeft(1);
+    } 
+    
+    if (key==="d") {
+      moveRight(1);
+    }
   }
-  antenna[1].yspeed = -1;
-  antenna[1].xspeed = 0;
-  antenna[1].orientation = antennaOrient[0];
-  antenna[1].smiley = smileyOrient[0];
-} 
-
-if (key==="s") {
-  if (antenna[1].yspeed === -1) {
-    return;
-  }
-  antenna[1].yspeed = 1;
-  antenna[1].xspeed = 0;
-  antenna[1].orientation = antennaOrient[1];
-  antenna[1].smiley = smileyOrient[1];
-} 
-
-if (key==="a") {
-  if (antenna[1].xspeed === 1) {
-    return;
-  }
-  antenna[1].yspeed = 0;
-  antenna[1].xspeed = -1;
-  antenna[1].orientation = antennaOrient[3];
-  antenna[1].smiley = smileyOrient[3];
-} 
-
-if (key==="d") {
-  if (antenna[1].xspeed === -1) {
-    return;
-  }
-  antenna[1].yspeed = 0;
-  antenna[1].xspeed = 1;
-  antenna[1].orientation = antennaOrient[2];
-  antenna[1].smiley = smileyOrient[2];
-}
 }//end keyPressed
 
 
@@ -281,8 +283,8 @@ function twoSnakeCollison(n) {
         gameOver("YOU BOTH LOSE")
         return;
       } else if (antenna[0].x === snakes[1].tail[j].x && antenna[0].y === snakes[1].tail[j].y) {
-        gameOver("BLUE WINS");
         noLoop();
+        gameOver("BLUE WINS");
         return;
         
       } else if (antenna[1].x === snakes[0].tail[i].x && antenna[1].y === snakes[0].tail[i].y) {
@@ -296,13 +298,15 @@ function twoSnakeCollison(n) {
 
 function winDepends(numSnakes) {
    if (numSnakes === 0 && snakes.length === 1) {
-    noLoop();
+          noLoop();
           gameOver("YOU LOSE")
           return;
         } else if (numSnakes===0) {
+          noLoop();
           gameOver("BLUE WINS");
           return;
         }  else if (numSnakes===1) {
+          noLoop();
           gameOver("GREEN WINS")
           return;
         }
@@ -314,4 +318,17 @@ function gameOver(wins) {
   text(wins, 30, 30)
   noLoop();
   return;
+}
+
+function containAI() {
+
+  
+  if(fruitY*grid == antenna[1].y) moveUp(1);
+  if(fruitX*grid == antenna[1].x) moveLeft(1);
+
+  
+  if(fruitX*grid > antenna[1].x) {moveRight(1);}
+  if(fruitX*grid < antenna[1].x) {moveLeft(1);}
+  if(fruitY*grid < antenna[1].y) {moveUp(1);}
+  if(fruitY*grid > antenna[1].y) {moveDown(1);}
 }
